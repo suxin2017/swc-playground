@@ -1,18 +1,22 @@
 use std::env;
 use std::path::PathBuf;
 use std::sync::Arc;
-use swc::{Compiler, HandlerOpts};
+// use swc::{Compiler, HandlerOpts};
 use once_cell::sync::Lazy;
 use serde_json::json;
-use swc::config::{Config, ExperimentalOptions, JscConfig, JscExperimental, Options, PluginConfig};
-pub use swc_common::{
-    comments::{self, SingleThreadedComments},
-    errors::Handler,
-    FileName, Mark, GLOBALS,
-};
-pub use swc_ecma_visit::VisitMutWith;
-use swc_common::{sync::Lrc, FilePathMapping, SourceMap};
-pub use swc_ecma_transforms::{pass::noop, resolver};
+use swc_core::base::{Compiler, HandlerOpts, try_with_handler};
+use swc_core::base::config::{Config, JscConfig, JscExperimental, Options, PluginConfig};
+use swc_core::common::{FileName, FilePathMapping, GLOBALS, SourceMap};
+use swc_core::common::comments::SingleThreadedComments;
+// use swc::config::{Config, ExperimentalOptions, JscConfig, JscExperimental, Options, PluginConfig};
+// pub use swc_common::{
+//     comments::{self, SingleThreadedComments},
+//     errors::Handler,
+//     FileName, Mark, GLOBALS,
+// };
+// pub use swc_ecma_visit::VisitMutWith;
+// use swc_common::{sync::Lrc, FilePathMapping, SourceMap};
+// pub use swc_ecma_transforms::{pass::noop, resolver};
 
 /// Get global sourcemap
 pub fn compiler() -> Arc<Compiler> {
@@ -34,7 +38,7 @@ async fn main() {
 
     let config = HandlerOpts::default();
     GLOBALS.set(&Default::default(), || {
-        swc::try_with_handler(cm, config, |handler|{
+        try_with_handler(cm, config, |handler|{
 
             let fm = c.cm.new_source_file(
                    FileName::Anon,
